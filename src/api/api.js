@@ -12,3 +12,19 @@ export const getActivityFromUser = async () => {
     const data = await response.json()
     return data
 }
+export const login = async (username, password) => {
+  try {
+    const response = await fetch("/mocks/token.json", {
+      headers : {
+        body : {"username" : username, "password": password}
+      }
+    })
+    if (!response.ok) {return false}
+    
+    const data = await response.json()
+    return data
+
+  }catch {
+    throw new Error("Erreur dans la récupération de l'api")
+  }
+}
