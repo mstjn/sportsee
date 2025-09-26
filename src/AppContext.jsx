@@ -1,10 +1,11 @@
 import { createContext, useState, useEffect } from "react";
-import { getUser } from "./api/api";
+import { getActivityFromUser, getUser } from "./api/api";
 
 export const AppContext = createContext()
 
 export const AppProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
+  const [currentActivity, setCurrentActivity] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,12 +19,23 @@ export const AppProvider = ({ children }) => {
         setLoading(false);
       }
     };
+    const fetchActivity = async () => {
+       try {
+        const activity = await getActivityFromUser();
+        setCurrentActivity(activity);
+      } catch (err) {
+        console.error("Erreur récupération activités :", err);
+      } finally {
+        setLoading(false);
+      }
+    }
 
     fetchUser();
+    fetchActivity()
   }, []);
 
   return (
-    <AppContext.Provider value={{ currentUser, setCurrentUser, loading }}>
+    <AppContext.Provider value={{ currentUser, setCurrentUser, loading, currentActivity, setCurrentActivity}}>
       {children}
     </AppContext.Provider>
   );
