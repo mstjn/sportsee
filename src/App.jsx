@@ -1,6 +1,12 @@
+import AppRoutes from "./routes";
+import { AppProvider } from "./AppContext";
 
-import AppRoutes from "./routes"; 
 const App = () => {
- return <AppRoutes />;
+  return (
+    <AppProvider>
+      <AppRoutes />
+    </AppProvider>
+  );
 };
+
 export default App;

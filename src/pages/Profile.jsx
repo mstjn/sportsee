@@ -1,17 +1,24 @@
 import { useNavigate } from "react-router-dom";
+import { AppContext } from "../AppContext";
+import { useContext } from "react";
+import Banner from "../components/Banner";
+import Footer from "../components/Footer";
 
 export default function Profile() {
-  const navigate = useNavigate();
+  
 
-  const handleLogout = () => {
-    localStorage.removeItem("token")
-    navigate("/");
-  };
+  
+
+   const { currentUser, loading } = useContext(AppContext)
+  
+     if (loading) {
+      return <p>Chargement en cours...</p>;
+    }
 
   return (
-    <div>
-      <h1>Profile</h1>
-      <button onClick={handleLogout}>Se déconnecter</button>
-    </div>
+    <>
+    <Banner />
+    <Footer />
+    </>
   );
 }

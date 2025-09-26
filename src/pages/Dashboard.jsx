@@ -1,4 +1,8 @@
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AppContext } from "../AppContext";
+import Banner from "../components/Banner";
+import Footer from "../components/Footer";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -8,10 +12,16 @@ export default function Dashboard() {
     navigate("/");
   };
 
+  const { currentUser, loading } = useContext(AppContext)
+
+   if (loading) {
+    return <p>Chargement en cours...</p>;
+  }
+
   return (
-    <div>
-      <h1>Dashboard</h1>
-      <button onClick={handleLogout}>Se déconnecter</button>
-    </div>
+    <>
+    <Banner />
+    <Footer />
+    </>
   );
 }
