@@ -8,3 +8,6 @@ body {
 header {
     padding: 55px 150px;
 }
+#background-gradient {
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0) -8.38%, #FFFFFF 100%);
+}

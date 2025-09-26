@@ -13,7 +13,8 @@ export default function Login() {
     return <Navigate to="/dashboard" replace />;
   }
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault()
     const response = await login(username, password);
     if (!response) {
       return;
@@ -47,7 +48,7 @@ export default function Login() {
               <input className="border-1  px-2 focus:outline-none rounded-lg h-14 border-[#717171]" type="text" />
             </div>
 
-            <button className="my-5 bg-[#0B23F4] text-white rounded-lg font-medium w-full py-3.5">Se connecter</button>
+            <button onClick={handleLogin} className="my-5 bg-[#0B23F4] text-white rounded-lg font-medium w-full py-3.5">Se connecter</button>
           </form>
           <p className="cursor-pointer text-sm">Mot de passe oublié ?</p>
         </div>
