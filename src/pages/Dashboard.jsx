@@ -220,8 +220,8 @@ const CustomLegend = ({payload}) => {
     </PieChart>
   );
 
-  let nb = parseFloat(currentUser.statistics.totalDistance);
-  nb = nb.toFixed(0);
+  let totalDistance = currentActivity.reduce((acc, it) => acc + it.distance, 0);
+  totalDistance = totalDistance.toFixed(0);
 
   let date = new Date(currentUser.profile.createdAt);
   date = date.toLocaleDateString("fr-FR", {
@@ -252,7 +252,7 @@ const CustomLegend = ({payload}) => {
             <p className="text-sm text-[#707070]">Distance totale parcourue</p>
             <span className="flex items-center gap-5 bg-[#0B23F4] text-white p-6.5 rounded-lg">
               <img src="/OUTLINE.png" alt="" />
-              <p className="font-medium text-xl">{nb} km</p>
+              <p className="font-medium text-xl">{totalDistance} km</p>
             </span>
           </div>
         </section>

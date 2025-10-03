@@ -1,11 +1,11 @@
 import { createContext, useState, useEffect } from "react";
 import { getActivityFromUser, getUser } from "./api/api";
 
-export const AppContext = createContext()
+export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [currentActivity, setCurrentActivity] = useState(null);
+  const [currentUser, setCurrentUser] = useState({ profile: {}, statistics: {} });
+  const [currentActivity, setCurrentActivity] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export const AppProvider = ({ children }) => {
       }
     };
     const fetchActivity = async () => {
-       try {
+      try {
         const activity = await getActivityFromUser();
         setCurrentActivity(activity);
       } catch (err) {
@@ -28,15 +28,11 @@ export const AppProvider = ({ children }) => {
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     fetchUser();
-    fetchActivity()
+    fetchActivity();
   }, []);
 
-  return (
-    <AppContext.Provider value={{ currentUser, setCurrentUser, loading, currentActivity, setCurrentActivity}}>
-      {children}
-    </AppContext.Provider>
-  );
+  return <AppContext.Provider value={{ currentUser, setCurrentUser, loading, currentActivity, setCurrentActivity }}>{children}</AppContext.Provider>;
 };

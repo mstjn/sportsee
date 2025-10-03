@@ -4,9 +4,9 @@ import Banner from "../components/Banner";
 import Footer from "../components/Footer";
 
 export default function Profile() {
-  const { currentUser, loading } = useContext(AppContext);
+  const { currentUser, loading, currentActivity } = useContext(AppContext);
 
-  if (loading) {
+  if (loading || !currentUser || !currentUser.statistics || !currentActivity) {
     return <p>Chargement en cours...</p>;
   }
 
@@ -16,6 +16,29 @@ export default function Profile() {
     month: "long",
     day: "numeric",
   });
+
+  const formatCmToMeterString = (cm) => {
+    if (cm == null || isNaN(Number(cm))) return "";
+    const n = Math.round(Number(cm));
+    const sign = n < 0 ? "-" : "";
+    const abs = Math.abs(n);
+    const m = Math.floor(abs / 100);
+    const r = abs % 100;
+    return `${sign}${m}m${String(r).padStart(2, "0")}`;
+  };
+
+
+  const totalCal = currentActivity?.reduce((acc, it) => acc + it.caloriesBurned, 0) ?? 0;
+  const diffMs = new Date().getTime() - new Date(currentUser.profile.createdAt).getTime();
+  const count = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const restDays = count - currentActivity.length + 1;
+  let totalDistance = currentActivity.reduce((acc, it) => acc + it.distance, 0);
+  totalDistance = totalDistance.toFixed(0);
+  const totalMinutes = currentActivity.reduce((acc, it) => acc + it.duration, 0);
+
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  const sessions = currentActivity.length
 
   return (
     <>
@@ -40,7 +63,7 @@ export default function Profile() {
             <hr className="border-0 h-[1px] bg-[#E7E7E7]" />
             <p className="text-lg">Âge: {currentUser.profile.age}</p>
             <p className="text-lg">Genre: Femme</p>
-            <p className="text-lg">Taille: {currentUser.profile.height}</p>
+            <p className="text-lg">Taille: {formatCmToMeterString(currentUser.profile.height)}</p>
             <p className="text-lg">Poids: {currentUser.profile.weight}kg</p>
           </div>
         </section>
@@ -51,31 +74,31 @@ export default function Profile() {
             <div className="bg-[#0B23F4] text-white flex flex-col gap-4 rounded-lg w-[45%] px-7 py-4">
               <p>Temps total couru</p>
               <p className="text-2xl">
-                27h <span className="text-lg text-[#B6BDFC]">15min</span>
+                {hours}h <span className="text-lg text-[#B6BDFC]">{minutes}min</span>
               </p>
             </div>
             <div className="bg-[#0B23F4] text-white flex flex-col gap-4 rounded-lg w-[45%] px-7 py-4">
-              <p>Temps total couru</p>
+              <p>Calories brûlées</p>
               <p className="text-2xl">
-                27h <span className="text-lg text-[#B6BDFC]">15min</span>
+                {totalCal} <span className="text-lg text-[#B6BDFC]">cal</span>
               </p>
             </div>
             <div className="bg-[#0B23F4] text-white flex flex-col gap-4 rounded-lg w-[45%] px-7 py-4">
-              <p>Temps total couru</p>
+              <p>Distance totale parcourue</p>
               <p className="text-2xl">
-                27h <span className="text-lg text-[#B6BDFC]">15min</span>
+                {totalDistance} <span className="text-lg text-[#B6BDFC]">km</span>
               </p>
             </div>
             <div className="bg-[#0B23F4] text-white flex flex-col gap-4 rounded-lg w-[45%] px-7 py-4">
-              <p>Temps total couru</p>
+              <p>Nombre de jours de repos</p>
               <p className="text-2xl">
-                27h <span className="text-lg text-[#B6BDFC]">15min</span>
+                {restDays} <span className="text-lg text-[#B6BDFC]">jours</span>
               </p>
             </div>
             <div className="bg-[#0B23F4] text-white flex flex-col gap-4 rounded-lg w-[45%] px-7 py-4">
-              <p>Temps total couru</p>
+              <p>Nombre de sessions</p>
               <p className="text-2xl">
-                27h <span className="text-lg text-[#B6BDFC]">15min</span>
+                {sessions} <span className="text-lg text-[#B6BDFC]">sessions</span>
               </p>
             </div>
           </div>
