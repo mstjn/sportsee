@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { AppContext } from "../AppContext";
 import Banner from "../components/Banner";
 import Footer from "../components/Footer";
@@ -8,120 +8,206 @@ export default function Dashboard() {
   const { currentUser, loading, currentActivity } = useContext(AppContext);
   const [hoverChartKm, setHoverChartKm] = useState(false);
   const [hoverLineMax, setHoverLineMax] = useState(false);
+  const [countKm, setCountKm] = useState(1);
+  const [countBPM, setCountBPM] = useState(1);
+
+  // km chart function
+  const kmLastWeeks = useMemo(() => {
+    const today = new Date();
+
+    const firstDate = new Date();
+    firstDate.setDate(today.getDate() - (countKm - 1) * 28);
+
+    const lastDate = new Date();
+    lastDate.setDate(today.getDate() - countKm * 28);
+
+    const currentWeekActivities = currentActivity.filter((act) => {
+      const actDate = new Date(act.date);
+      return actDate >= lastDate && actDate <= firstDate;
+    });
+
+    const weeks = [0, 0, 0, 0];
+
+    currentWeekActivities.forEach((act) => {
+      const actDate = new Date(act.date);
+      const diffDays = Math.floor((firstDate - actDate) / (1000 * 60 * 60 * 24));
+      const weekIndex = Math.floor(diffDays / 7);
+      if (weekIndex < 4) {
+        weeks[3 - weekIndex] += act.distance;
+      }
+    });
+
+    const validWeeks = weeks.filter((it) => it > 0);
+    const total = validWeeks.reduce((acc, it) => acc + it, 0);
+    const moy = validWeeks.length > 0 ? Math.floor(total / validWeeks.length) : 0;
+
+    
+    const data = weeks.map((km, i) => ({
+      name: `S${i + 1}`,
+      km: Math.round(km),
+    }));
+
+    const infos = [
+      data,
+      firstDate.toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "short",
+      }),
+      lastDate.toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "short",
+      }),
+      moy,
+    ];
+
+    return infos;
+  }, [currentActivity, countKm]);
+
+  function toMidnight(date) {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+  // bpm chart function
+  const bpmLastWeeks = useMemo(() => {
+    const today = toMidnight(new Date());
+    const sunday = new Date();
+    const firstDate = toMidnight(new Date());
+
+    for (let i = 0; i < 7; i++) {
+      sunday.setDate(today.getDate() - i);
+
+      if (sunday.toLocaleDateString("fr-FR", { weekday: "long" }) === "dimanche") {
+        firstDate.setDate(sunday.getDate() - (countBPM - 1) * 7);
+        firstDate.setHours(23, 59, 0, 0);
+        break;
+      }
+    }
+
+    const lastDate = toMidnight(new Date());
+    lastDate.setDate(today.getDate() - countBPM * 7);
+
+    const currentWeekActivities = currentActivity.filter((act) => {
+      const actDate = new Date(act.date);
+      return actDate >= lastDate && actDate <= firstDate;
+    });
+
+    const days = [{}, {}, {}, {}, {}, {}, {}];
+    const d = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"];
+
+    currentWeekActivities.forEach((act) => {
+      const day = new Date(act.date).toLocaleDateString("fr-FR", { weekday: "long" });
+      let index;
+      for (let i = 0; i < d.length; i++) {
+        if (d[i] === day) {
+          index = i;
+          break;
+        }
+      }
+      days[index] = act.heartRate;
+    });
+
+    const total = currentWeekActivities.reduce((acc, it) => acc + it.heartRate.average, 0);
+    const moy = Math.floor(total / currentWeekActivities.length);
+
+    const data = days.map((hr, i) => ({
+      day: d[i],
+      max: Math.round(hr.max),
+      min: Math.round(hr.min),
+      average: Math.round(hr.average),
+    }));
+
+    const infos = [
+      data,
+      firstDate.toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "short",
+      }),
+      lastDate.toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "short",
+      }),
+      moy,
+    ];
+
+    return infos;
+  }, [currentActivity, countBPM]);
 
   if (loading) {
     return <p>Chargement en cours...</p>;
   }
 
-  console.log(currentActivity);
+  // circle chart function
+  const thisWeek = () => {
+    const today = new Date();
 
-  const data = [
-    {
-      name: "S1",
-      km: 32,
-    },
-    {
-      name: "S2",
-      km: 65,
-    },
-    {
-      name: "S3",
-      km: 25,
-    },
-    {
-      name: "S4",
-      km: 60,
-    },
-  ];
-  const data2 = [
-    {
-      day: "Lun",
-      max: 185,
-      min: 80,
-      average: 160,
-    },
-    {
-      day: "Mar",
-      max: 165,
-      min: 50,
-      average: 154,
-    },
-    {
-      day: "Mer",
-      max: 125,
-      min: 95,
-      average: 150,
-    },
-    {
-      day: "Jeu",
-      max: 160,
-      min: 85,
-      average: 140,
-    },
-    {
-      day: "Ven",
-      max: 188,
-      min: 65,
-      average: 165,
-    },
-    {
-      day: "Sam",
-      max: 205,
-      min: 102,
-      average: 188,
-    },
-    {
-      day: "Dim",
-      max: 140,
-      min: 99,
-      average: 110,
-    },
-  ];
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(today.getDate() - 7);
 
-const CustomLegend = ({payload}) => {
- return (
-    <ul style={{ display: "flex", gap: "20px", listStyle: "none", margin: 0, padding: 0, color :"#707070" }}>
-      {payload.map((entry, index) => (
-        <li key={`item-${index}`} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-          <span style={{ width: 10, height: 10, backgroundColor: entry.color, borderRadius: "50%" }}></span>
-          {entry.value}
-        </li>
-      ))}
-    </ul>
-  );
-};
+    const lastWeekActivities = currentActivity.filter((act) => {
+      const actDate = new Date(act.date);
+      return actDate >= oneWeekAgo && actDate <= today;
+    });
+
+    const totalMinutes = lastWeekActivities.reduce((acc, it) => acc + it.duration, 0);
+    let totalDistance = lastWeekActivities.reduce((acc, it) => acc + it.distance, 0);
+    totalDistance = totalDistance.toFixed(0);
+    const data = {
+      data: [
+        { name: `${lastWeekActivities.length} réalisées`, value: lastWeekActivities.length },
+        { name: `${6 - lastWeekActivities.length} restants`, value: 6 - lastWeekActivities.length },
+      ],
+      distance: totalDistance,
+      duree: totalMinutes,
+      dateAuj: today.toLocaleDateString("fr-FR"),
+      datePrev: oneWeekAgo.toLocaleDateString("fr-FR"),
+    };
+    return data;
+  };
+
+  const CustomLegend = ({ payload }) => {
+    return (
+      <ul style={{ display: "flex", gap: "20px", listStyle: "none", margin: 0, padding: 0, color: "#707070" }}>
+        {payload.map((entry, index) => (
+          <li key={`item-${index}`} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+            <span style={{ width: 10, height: 10, backgroundColor: entry.color, borderRadius: "50%" }}></span>
+            {entry.value}
+          </li>
+        ))}
+      </ul>
+    );
+  };
 
   const CustomLegendPie = ({ payload }) => {
+    const leftItems = payload.filter((_, i) => i % 2 === 0);
+    const rightItems = payload.filter((_, i) => i % 2 === 1);
 
-  const leftItems = payload.filter((_, i) => i % 2 === 0);  
-  const rightItems = payload.filter((_, i) => i % 2 === 1); 
+    return (
+      <div>
+        <ul style={{ display: "flex", gap: "20px", listStyle: "none", position: "absolute", top: -300, right: 0 }}>
+          {leftItems.map((entry, index) => (
+            <li key={`left-${index}`} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <span style={{ width: 10, height: 10, backgroundColor: entry.color, borderRadius: "50%" }} />
+              <span style={{ color: "#707070" }}>{entry.value}</span>
+            </li>
+          ))}
+        </ul>
 
-  return (
-    <div>
-      <ul style={{ display: "flex", gap: "20px", listStyle: "none", position : "absolute", top : -300, right : 0}}>
-        {leftItems.map((entry, index) => (
-          <li key={`left-${index}`} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <span style={{ width: 10, height: 10, backgroundColor: entry.color, borderRadius: "50%" }} />
-            <span style={{ color: "#707070" }}>{entry.value}</span>
-          </li>
-        ))}
-      </ul>
+        <ul style={{ display: "flex", gap: "20px", listStyle: "none", position: "absolute", top: -30, left: -30 }}>
+          {rightItems.map((entry, index) => (
+            <li key={`right-${index}`} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <span style={{ width: 10, height: 10, backgroundColor: entry.color, borderRadius: "50%" }} />
+              <span style={{ color: "#707070" }}>{entry.value}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
 
-      <ul style={{ display: "flex", gap: "20px", listStyle: "none", position : "absolute", top : -30, left : -30 }}>
-        {rightItems.map((entry, index) => (
-          <li key={`right-${index}`} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <span style={{ width: 10, height: 10, backgroundColor: entry.color, borderRadius: "50%" }} />
-            <span style={{ color: "#707070" }}>{entry.value}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-  const firstChart = (
+  const kmChart = (
     <ResponsiveContainer width="100%" height={500}>
-      <BarChart data={data}>
+      <BarChart data={kmLastWeeks[0]}>
         <XAxis dataKey="name" tickLine={false} stroke="#707070" tickMargin={30} />
         <YAxis tickCount={4} tickLine={false} stroke="#707070" tickMargin={10} />
         <Tooltip wrapperStyle={{ width: 100 }} />
@@ -159,9 +245,9 @@ const CustomLegend = ({payload}) => {
     </ResponsiveContainer>
   );
 
-  const secondChart = (
+  const bpmChart = (
     <ResponsiveContainer width="100%" height={500}>
-      <BarChart data={data2}>
+      <BarChart data={bpmLastWeeks[0]}>
         <XAxis dataKey="day" tickLine={false} stroke="#707070" tickMargin={30} />
         <YAxis tickCount={4} tickLine={false} stroke="#707070" tickMargin={10} />
         <Tooltip wrapperStyle={{ width: 150 }} />
@@ -205,14 +291,9 @@ const CustomLegend = ({payload}) => {
     </ResponsiveContainer>
   );
 
-  const data02 = [
-    { name: "4 Réalisées", value: 4 },
-    { name: "2 Restants", value: 2 },
-  ];
-
-  const chart = (
+  const circleChart = (
     <PieChart width={300} height={300}>
-      <Pie legendType="circle" endAngle={-360} data={data02} dataKey="value" cx="50%" cy="50%" innerRadius={50} outerRadius={110}>
+      <Pie legendType="circle" endAngle={-360} data={thisWeek().data} dataKey="value" cx="50%" cy="50%" innerRadius={50} outerRadius={110}>
         <Cell fill="#0B23F4" />
         <Cell fill="#B6BDFC" />
       </Pie>
@@ -261,52 +342,66 @@ const CustomLegend = ({payload}) => {
           <div className="flex gap-8">
             <div className="bg-white rounded-xl p-10 w-[45%]" onMouseEnter={() => setHoverChartKm(true)} onMouseLeave={() => setHoverChartKm(false)}>
               <div className="flex justify-between items-center mb-2 ">
-                <h3 className="font-medium text-2xl text-[#0B23F4]">18km en moyenne</h3>
+                <h3 className="font-medium text-2xl text-[#0B23F4]">{kmLastWeeks[3]}km en moyenne</h3>
                 <div className="flex gap-3 items-center">
-                  <button className="border-1 rounded-xl px-2">&lt;</button>
-                  <p className="]">28 mai - 25 juin</p>
-                  <button className="border-1 rounded-xl px-2">&gt;</button>
+                  <button className="border-1 rounded-xl px-2" onClick={() => setCountKm(countKm + 1)}>
+                    &lt;
+                  </button>
+                  <p className="]">
+                    {kmLastWeeks[2]} - {kmLastWeeks[1]}
+                  </p>
+                  <button className="border-1 rounded-xl px-2" onClick={() => setCountKm(countKm - 1)}>
+                    &gt;
+                  </button>
                 </div>
               </div>
               <p className="text-sm text-[#707070]">Total des kilomètres 4 dernières semaines</p>
-              <br /> {firstChart}
+              <br /> {kmChart}
             </div>
             <div className="bg-white rounded-xl p-10 w-[55%]" onMouseEnter={() => setHoverLineMax(true)} onMouseLeave={() => setHoverLineMax(false)}>
               <div className="flex justify-between items-center mb-2 ">
-                <h3 className="font-medium text-2xl text-[#F4320B]">163 BPM</h3>
+                <h3 className="font-medium text-2xl text-[#F4320B]">{bpmLastWeeks[3]} BPM</h3>
                 <div className="flex gap-3 items-center">
-                  <button className="border-1 rounded-xl px-2">&lt;</button>
-                  <p className="]">28 mai - 04 juin</p>
-                  <button className="border-1 rounded-xl px-2">&gt;</button>
+                  <button className="border-1 rounded-xl px-2" onClick={() => setCountBPM(countBPM + 1)}>
+                    &lt;
+                  </button>
+                  <p className="]">
+                    {bpmLastWeeks[2]} - {bpmLastWeeks[1]}
+                  </p>
+                  <button className="border-1 rounded-xl px-2" onClick={() => setCountBPM(countBPM - 1)}>
+                    &gt;
+                  </button>
                 </div>
               </div>
               <p className="text-sm text-[#707070]">Fréquence cardiaque moyenne</p>
-              <br /> {secondChart}
+              <br /> {bpmChart}
             </div>
           </div>
         </section>
         <section className="mb-15">
           <h2 className="font-medium text-2xl mb-2">Cette semaine</h2>
-          <p className=" text-[#707070] font-medium text-xl mb-10">Du 23/06/2025 au 30/06/2025</p>
+          <p className=" text-[#707070] font-medium text-xl mb-10">
+            Du {thisWeek().datePrev} au {thisWeek().dateAuj}
+          </p>
           <div className="flex gap-10">
             <div className="bg-white rounded-lg p-10 w-[45%]">
               <p className="font-semibold text-3xl text-[#0B23F4] flex items-center gap-2 mb-2">
-                x4 <span className="text-lg text-[#B6BDFC] font-medium">sur objectif de 6</span>
+                x{thisWeek().data[0].value} <span className="text-lg text-[#B6BDFC] font-medium">sur objectif de 6</span>
               </p>
               <p className="text-[#707070]">Courses hebdomadaire réalisées</p>
-              <div className="flex justify-center">{chart}</div>
+              <div className="flex justify-center">{circleChart}</div>
             </div>
             <div className="flex flex-col gap-5 w-[55%]">
               <div className="bg-white rounded-lg flex flex-col gap-5 p-7">
                 <p className="text-[#707070]">Durée d'activité</p>
                 <p className="text-[#0B23F4] text-2xl font-medium">
-                  140 <span className="text-[#B6BDFC] font-medium text-xl">minutes</span>
+                  {thisWeek().duree} <span className="text-[#B6BDFC] font-medium text-xl">minutes</span>
                 </p>
               </div>
               <div className="bg-white rounded-lg flex flex-col gap-5 w-full p-7">
                 <p className="text-[#707070]">Distance</p>
                 <p className="text-[#F4320B] text-2xl font-medium">
-                  21.7 <span className="text-[#FCC1B6] font-medium text-xl">kilomètres</span>
+                  {thisWeek().distance} <span className="text-[#FCC1B6] font-medium text-xl">kilomètres</span>
                 </p>
               </div>
             </div>

@@ -1021,5 +1021,82 @@
             "average": 163
         },
         "caloriesBurned": 465
+    },
+     {
+        "date": "2025-10-13",
+        "distance": 7.1,
+        "duration": 43,
+        "heartRate": {
+            "min": 142,
+            "max": 178,
+            "average": 163
+        },
+        "caloriesBurned": 465
+    },
+    {
+        "date": "2025-10-09",
+        "distance": 7.1,
+        "duration": 43,
+        "heartRate": {
+            "min": 142,
+            "max": 178,
+            "average": 163
+        },
+        "caloriesBurned": 465
+    },
+    {
+        "date": "2025-10-05",
+        "distance": 7.1,
+        "duration": 43,
+        "heartRate": {
+            "min": 142,
+            "max": 178,
+            "average": 175
+        },
+        "caloriesBurned": 465
+    },
+    {
+        "date": "2025-09-29",
+        "distance": 7.1,
+        "duration": 43,
+        "heartRate": {
+            "min": 142,
+            "max": 178,
+            "average": 154
+        },
+        "caloriesBurned": 465
+    },
+    {
+        "date": "2025-10-01",
+        "distance": 7.1,
+        "duration": 43,
+        "heartRate": {
+            "min": 142,
+            "max": 178,
+            "average": 123
+        },
+        "caloriesBurned": 465
+    },
+    {
+        "date": "2025-10-02",
+        "distance": 7.1,
+        "duration": 43,
+        "heartRate": {
+            "min": 142,
+            "max": 178,
+            "average": 145
+        },
+        "caloriesBurned": 465
+    },
+    {
+        "date": "2025-10-04",
+        "distance": 7.1,
+        "duration": 43,
+        "heartRate": {
+            "min": 142,
+            "max": 178,
+            "average": 156
+        },
+        "caloriesBurned": 465
     }
 ]
