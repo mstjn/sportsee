@@ -31,7 +31,7 @@ export default function Profile() {
   const totalCal = currentActivity?.reduce((acc, it) => acc + it.caloriesBurned, 0) ?? 0;
   const diffMs = new Date().getTime() - new Date(currentUser.profile.createdAt).getTime();
   const count = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  const restDays = count - currentActivity.length + 1;
+  const restDays = (count - currentActivity.length + 1) || 0;
   let totalDistance = currentActivity.reduce((acc, it) => acc + it.distance, 0);
   totalDistance = totalDistance.toFixed(0);
   const totalMinutes = currentActivity.reduce((acc, it) => acc + it.duration, 0);

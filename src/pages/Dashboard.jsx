@@ -41,7 +41,6 @@ export default function Dashboard() {
     const total = validWeeks.reduce((acc, it) => acc + it, 0);
     const moy = validWeeks.length > 0 ? Math.floor(total / validWeeks.length) : 0;
 
-    
     const data = weeks.map((km, i) => ({
       name: `S${i + 1}`,
       km: Math.round(km),
@@ -85,7 +84,14 @@ export default function Dashboard() {
     }
 
     const lastDate = toMidnight(new Date());
-    lastDate.setDate(today.getDate() - countBPM * 7);
+    const monday = new Date();
+    for (let i = 0; i < 7; i++) {
+      monday.setDate(today.getDate() - i);
+      if (monday.toLocaleDateString("fr-FR", { weekday: "long" }) === "lundi") {
+        lastDate.setDate(monday.getDate() - countBPM * 7);
+        break;
+      }
+    }
 
     const currentWeekActivities = currentActivity.filter((act) => {
       const actDate = new Date(act.date);
@@ -107,8 +113,9 @@ export default function Dashboard() {
       days[index] = act.heartRate;
     });
 
-    const total = currentWeekActivities.reduce((acc, it) => acc + it.heartRate.average, 0);
-    const moy = Math.floor(total / currentWeekActivities.length);
+    const total = currentWeekActivities.reduce((acc, it) => acc + (it.heartRate?.average || 0), 0);
+
+    let moy = currentWeekActivities.length ? Math.floor(total / currentWeekActivities.length) : 0;
 
     const data = days.map((hr, i) => ({
       day: d[i],
@@ -151,7 +158,7 @@ export default function Dashboard() {
 
     const totalMinutes = lastWeekActivities.reduce((acc, it) => acc + it.duration, 0);
     let totalDistance = lastWeekActivities.reduce((acc, it) => acc + it.distance, 0);
-    totalDistance = totalDistance.toFixed(0);
+    totalDistance = totalDistance.toFixed(1);
     const data = {
       data: [
         { name: `${lastWeekActivities.length} réalisées`, value: lastWeekActivities.length },
@@ -344,13 +351,13 @@ export default function Dashboard() {
               <div className="flex justify-between items-center mb-2 ">
                 <h3 className="font-medium text-2xl text-[#0B23F4]">{kmLastWeeks[3]}km en moyenne</h3>
                 <div className="flex gap-3 items-center">
-                  <button className="border-1 rounded-xl px-2" onClick={() => setCountKm(countKm + 1)}>
+                  <button className="border-1 rounded-xl px-2 hover:text-white hover:bg-[#0B23F4]" onClick={() => setCountKm(countKm + 1)}>
                     &lt;
                   </button>
                   <p className="]">
                     {kmLastWeeks[2]} - {kmLastWeeks[1]}
                   </p>
-                  <button className="border-1 rounded-xl px-2" onClick={() => setCountKm(countKm - 1)}>
+                  <button className="border-1 rounded-xl px-2 hover:text-white hover:bg-[#0B23F4]" onClick={() => setCountKm(countKm - 1)}>
                     &gt;
                   </button>
                 </div>
@@ -362,13 +369,13 @@ export default function Dashboard() {
               <div className="flex justify-between items-center mb-2 ">
                 <h3 className="font-medium text-2xl text-[#F4320B]">{bpmLastWeeks[3]} BPM</h3>
                 <div className="flex gap-3 items-center">
-                  <button className="border-1 rounded-xl px-2" onClick={() => setCountBPM(countBPM + 1)}>
+                  <button className="border-1 rounded-xl px-2 hover:text-white hover:bg-[#0B23F4]" onClick={() => setCountBPM(countBPM + 1)}>
                     &lt;
                   </button>
                   <p className="]">
                     {bpmLastWeeks[2]} - {bpmLastWeeks[1]}
                   </p>
-                  <button className="border-1 rounded-xl px-2" onClick={() => setCountBPM(countBPM - 1)}>
+                  <button className="border-1 rounded-xl px-2 hover:text-white hover:bg-[#0B23F4]" onClick={() => setCountBPM(countBPM - 1)}>
                     &gt;
                   </button>
                 </div>

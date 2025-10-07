@@ -7,12 +7,14 @@ export const AppProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState({ profile: {}, statistics: {} });
   const [currentActivity, setCurrentActivity] = useState([]);
   const [loading, setLoading] = useState(true);
-
+ 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const user = await getUser();
         setCurrentUser(user);
+        console.log(user);
+        
       } catch (err) {
         console.error("Erreur récupération user :", err);
       } finally {
