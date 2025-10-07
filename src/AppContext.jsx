@@ -7,34 +7,48 @@ export const AppProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState({ profile: {}, statistics: {} });
   const [currentActivity, setCurrentActivity] = useState([]);
   const [loading, setLoading] = useState(true);
- 
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [error, setError] = useState(null);
+
   useEffect(() => {
-    const fetchUser = async () => {
+     if (!token) {
+    setCurrentUser({ profile: {}, statistics: {} });
+    setCurrentActivity([]);
+    setLoading(false);
+    return;
+  }
+      const fetchData = async () => {
       try {
-        const user = await getUser();
+        setLoading(true);
+        setError(null);
+
+        const user = await getUser(token);
+        const activity = await getActivityFromUser(token);
+
         setCurrentUser(user);
-        console.log(user);
-        
-      } catch (err) {
-        console.error("Erreur récupération user :", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    const fetchActivity = async () => {
-      try {
-        const activity = await getActivityFromUser();
         setCurrentActivity(activity);
       } catch (err) {
-        console.error("Erreur récupération activités :", err);
+        console.error("Erreur récupération données :", err);
+        setError("Impossible de récupérer les données utilisateur");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUser();
-    fetchActivity();
-  }, []);
+    fetchData();
+  }, [token]);
 
-  return <AppContext.Provider value={{ currentUser, setCurrentUser, loading, currentActivity, setCurrentActivity }}>{children}</AppContext.Provider>;
+    useEffect(() => {
+    if (token) {
+      localStorage.setItem("token", token);
+    } else {
+      localStorage.removeItem("token");
+    }
+  }, [token]);
+
+  return (
+    <AppContext.Provider value={{ error, token, setToken, currentUser, setCurrentUser, loading, currentActivity, setCurrentActivity }}>
+      {children}
+    </AppContext.Provider>
+  );
 };

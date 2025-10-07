@@ -1,24 +1,28 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { login } from "../api/api";
+import { AppContext } from "../AppContext";
 
 export default function Login() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const token = localStorage.getItem("token");
+  const { token, setToken, error, setError} = useContext(AppContext);
+
 
   if (token) {
     return <Navigate to="/dashboard" replace />;
   }
 
   const handleLogin = async (e) => {
+    e.preventDefault();
     const response = await login(username, password);
     if (!response) {
+      setError(true);
       return;
     }
-    localStorage.setItem("token", response.token);
+    setToken(response.token);
     navigate("/dashboard");
   };
 
@@ -35,19 +39,40 @@ export default function Login() {
           <h3 className="mt-5 font-medium text-2xl">Se connecter</h3>
           <form action="" className="flex flex-col gap-6">
             <div className="flex flex-col">
-              <label htmlFor="" className="text-sm text-[#707070]">
+              <label htmlFor="username" className="text-sm text-[#707070]">
                 Adresse email
               </label>
-              <input value={username} onChange={(e) => setUsername(e.target.value)} className="border-1  px-2 focus:outline-none rounded-lg h-14 border-[#717171] focus:border-[#5465F7]" type="text" />
+              <input
+                id="username"
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  setError(false);
+                }}
+                className={`${error && "border-red-400"} border-1 px-2 focus:outline-none rounded-lg h-14 border-[#717171] focus:border-[#5465F7]`}
+                type="text"
+              />
             </div>
             <div className="flex flex-col">
-              <label htmlFor="" className="text-sm text-[#707070] ">
+              <label htmlFor="password" className="text-sm text-[#707070] ">
                 Mot de passe
               </label>
-              <input value={password} onChange={(e) => setPassword(e.target.value)} className="border-1  px-2 focus:outline-none rounded-lg h-14 border-[#717171] focus:border-[#5465F7]" type="text" />
+              <input
+                id="password"
+                value={password}
+                type="password"
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError(false);
+                }}
+                className={`${error && "border-red-400"} border-1 px-2 focus:outline-none rounded-lg h-14 border-[#717171] focus:border-[#5465F7]`}
+              />
             </div>
+            <p className={`${error ? "text-red-400 text-sm self-center" : "hidden"}`}>Les identifiants sont incorrects</p>
 
-            <button onClick={handleLogin} className="my-5 bg-[#0B23F4] text-white rounded-lg font-medium w-full py-3.5 hover:bg-[#5465F7]">Se connecter</button>
+            <button onClick={handleLogin} className="my-5 bg-[#0B23F4] text-white rounded-lg font-medium w-full py-3.5 hover:bg-[#5465F7]">
+              Se connecter
+            </button>
           </form>
           <p className="cursor-pointer text-sm">Mot de passe oublié ?</p>
         </div>

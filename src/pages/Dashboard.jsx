@@ -141,7 +141,9 @@ export default function Dashboard() {
   }, [currentActivity, countBPM]);
 
   if (loading) {
-    return <p>Chargement en cours...</p>;
+    return <div className="flex w-full h-[100vh] justify-center items-center">
+      <p className="text-4xl ">Chargement...</p>
+    </div>;
   }
 
   // circle chart function

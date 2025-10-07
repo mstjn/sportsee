@@ -1,5 +1,4 @@
-export const getUser = async () => {
-  const token = localStorage.getItem("token");
+export const getUser = async (token) => {
   const response = await fetch("http://localhost:8000/api/user-info", {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -14,8 +13,7 @@ export const getUser = async () => {
   const data = await response.json();
   return data;
 };
-export const getActivityFromUser = async () => {
-  const token = localStorage.getItem("token");
+export const getActivityFromUser = async (token) => {
   const response = await fetch("http://localhost:8000/api/user-activity?startWeek=2010-01-01&endWeek=2027-01-01", {
     headers: {
       Authorization: `Bearer ${token}`,

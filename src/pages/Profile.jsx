@@ -7,9 +7,10 @@ export default function Profile() {
   const { currentUser, loading, currentActivity } = useContext(AppContext);
 
   if (loading || !currentUser || !currentUser.statistics || !currentActivity) {
-    return <p>Chargement en cours...</p>;
+    return <div className="flex w-full h-[100vh] justify-center items-center">
+      <p className="text-4xl ">Chargement...</p>
+    </div>;
   }
-
   let date = new Date(currentUser.profile.createdAt);
   date = date.toLocaleDateString("fr-FR", {
     year: "numeric",
