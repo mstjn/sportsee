@@ -1,13 +1,82 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 body {
-  font-family: 'Inter', sans-serif;
-  background-color: #F2F3FF;
+  font-family: "Inter", sans-serif;
+  background-color: #f2f3ff;
 }
 header {
-    padding: 55px 150px;
+  padding: 55px 150px;
 }
 #background-gradient {
-  background: linear-gradient(0deg, rgba(255, 255, 255, 0) -8.38%, #FFFFFF 100%);
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0) -8.38%, #ffffff 100%);
+}
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+html,
+body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.load {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+}
+
+.load__bar {
+  width: 6px;
+  border-radius: 3px;
+  animation: bars 3s backwards infinite ease-in-out alternate;
+
+  background: linear-gradient(to bottom, #f99885, #df392b, #f4320b, #5465f7);
+}
+
+.load__bar--1 {
+  animation-delay: 0.5s;
+  height: 20px;
+  margin-top: 5px;
+}
+.load__bar--2 {
+  animation-delay: 0.5s;
+  height: 26px;
+}
+.load__bar--3 {
+  animation-delay: 0.5s;
+  height: 19px;
+  margin-top: 2px;
+}
+.load__bar--4 {
+  animation-delay: 0.5s;
+  height: 20px;
+  margin-top: 7px;
+}
+.load__bar--5 {
+  animation-delay: 0.5s;
+  height: 22px;
+}
+
+@keyframes bars {
+  0% {
+    transform: scaleY(1.2);
+    
+  }
+  40% {
+    transform: scaleY(0.5);
+    
+  }
+  60% {
+    transform: scaleY(0.5);
+   
+  }
+  80%{
+    transform: scaleY(1.2);
+  }
+  100% {
+    transform: scaleY(1.2);
+    
+  }
 }

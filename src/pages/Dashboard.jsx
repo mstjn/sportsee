@@ -3,7 +3,7 @@ import { AppContext } from "../AppContext";
 import Banner from "../components/Banner";
 import Footer from "../components/Footer";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid, Line, ResponsiveContainer, Pie, PieChart, Cell } from "recharts";
-
+import Logo from "../components/logo";
 export default function Dashboard() {
   const { currentUser, loading, currentActivity } = useContext(AppContext);
   const [hoverChartKm, setHoverChartKm] = useState(false);
@@ -142,7 +142,7 @@ export default function Dashboard() {
 
   if (loading) {
     return <div className="flex w-full h-[100vh] justify-center items-center">
-      <p className="text-4xl ">Chargement...</p>
+      <Logo />
     </div>;
   }
 
@@ -235,6 +235,7 @@ export default function Dashboard() {
             const marginBottom = 3;
             return (
               <rect
+              
                 x={props.x}
                 y={props.y - marginBottom}
                 width={props.width}
@@ -242,6 +243,7 @@ export default function Dashboard() {
                 fill={hoverChartKm ? "#0B23F4" : "#B6BDFC"}
                 rx={10}
                 ry={10}
+                
               />
             );
           }}
@@ -323,14 +325,18 @@ export default function Dashboard() {
   return (
     <>
       <Banner />
-      <main className="px-45 flex flex-col gap-25">
+      <main className="px-5 2xl:px-45 flex flex-col gap-25">
         <section id="background-gradient" className="flex justify-between items-center px-12 py-8 rounded-2xl">
           <figure className="flex items-center gap-10">
-            <img
+            <div className="overflow-hidden rounded-lg w-[35%]">
+               <img
               src={currentUser.profile.profilePicture}
-              className="[overflow-clip-margin:unset] object-cover w-[35%] h-34 rounded-lg"
+              className="[overflow-clip-margin:unset] object-cover w-full h-34 rounded-lg hover:scale-130 duration-350"
               alt="image de profil"
             />
+
+            </div>
+           
             <figcaption className="w-70">
               <h2 className="font-medium text-2xl">
                 {currentUser.profile.firstName} {currentUser.profile.lastName}
@@ -349,17 +355,17 @@ export default function Dashboard() {
         <section>
           <h2 className="font-medium text-2xl mb-10">Vos dernières performances</h2>
           <div className="flex gap-8">
-            <div className="bg-white rounded-xl p-10 w-[45%]" onMouseEnter={() => setHoverChartKm(true)} onMouseLeave={() => setHoverChartKm(false)}>
+            <div className="bg-white rounded-xl p-10 xl:w-[45%] w-[35%] hover:shadow-lg duration-400 delay-50" onMouseEnter={() => setHoverChartKm(true)} onMouseLeave={() => setHoverChartKm(false)}>
               <div className="flex justify-between items-center mb-2 ">
                 <h3 className="font-medium text-2xl text-[#0B23F4]">{kmLastWeeks[3]}km en moyenne</h3>
                 <div className="flex gap-3 items-center">
-                  <button className="border-1 rounded-xl px-2 hover:text-white hover:bg-[#0B23F4]" onClick={() => setCountKm(countKm + 1)}>
+                  <button className="border-1 rounded-xl px-2 hover:text-white hover:bg-[#0B23F4] duration-400 delay-50" onClick={() => setCountKm(countKm + 1)}>
                     &lt;
                   </button>
-                  <p className="]">
+                  <p>
                     {kmLastWeeks[2]} - {kmLastWeeks[1]}
                   </p>
-                  <button className="border-1 rounded-xl px-2 hover:text-white hover:bg-[#0B23F4]" onClick={() => setCountKm(countKm - 1)}>
+                  <button className="border-1 rounded-xl px-2 hover:text-white hover:bg-[#0B23F4] duration-400 delay-50" onClick={() => setCountKm(countKm - 1)}>
                     &gt;
                   </button>
                 </div>
@@ -367,17 +373,17 @@ export default function Dashboard() {
               <p className="text-sm text-[#707070]">Total des kilomètres 4 dernières semaines</p>
               <br /> {kmChart}
             </div>
-            <div className="bg-white rounded-xl p-10 w-[55%]" onMouseEnter={() => setHoverLineMax(true)} onMouseLeave={() => setHoverLineMax(false)}>
+            <div className="bg-white rounded-xl p-10 xl:w-[55%] w-[65%] hover:shadow-lg duration-400 delay-50" onMouseEnter={() => setHoverLineMax(true)} onMouseLeave={() => setHoverLineMax(false)}>
               <div className="flex justify-between items-center mb-2 ">
                 <h3 className="font-medium text-2xl text-[#F4320B]">{bpmLastWeeks[3]} BPM</h3>
                 <div className="flex gap-3 items-center">
-                  <button className="border-1 rounded-xl px-2 hover:text-white hover:bg-[#0B23F4]" onClick={() => setCountBPM(countBPM + 1)}>
+                  <button className="border-1 rounded-xl px-2 hover:text-white hover:bg-[#0B23F4] duration-400 delay-50" onClick={() => setCountBPM(countBPM + 1)}>
                     &lt;
                   </button>
                   <p className="]">
                     {bpmLastWeeks[2]} - {bpmLastWeeks[1]}
                   </p>
-                  <button className="border-1 rounded-xl px-2 hover:text-white hover:bg-[#0B23F4]" onClick={() => setCountBPM(countBPM - 1)}>
+                  <button className="border-1 rounded-xl px-2 hover:text-white hover:bg-[#0B23F4] duration-400 delay-50" onClick={() => setCountBPM(countBPM - 1)}>
                     &gt;
                   </button>
                 </div>
@@ -393,7 +399,7 @@ export default function Dashboard() {
             Du {thisWeek().datePrev} au {thisWeek().dateAuj}
           </p>
           <div className="flex gap-10">
-            <div className="bg-white rounded-lg p-10 w-[45%]">
+            <div className="bg-white rounded-lg p-10 w-[45%] hover:shadow-lg duration-400 delay-50">
               <p className="font-semibold text-3xl text-[#0B23F4] flex items-center gap-2 mb-2">
                 x{thisWeek().data[0].value} <span className="text-lg text-[#B6BDFC] font-medium">sur objectif de 6</span>
               </p>

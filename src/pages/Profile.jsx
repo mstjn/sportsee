@@ -2,14 +2,17 @@ import { AppContext } from "../AppContext";
 import { useContext } from "react";
 import Banner from "../components/Banner";
 import Footer from "../components/Footer";
+import Logo from "../components/logo";
 
 export default function Profile() {
   const { currentUser, loading, currentActivity } = useContext(AppContext);
 
   if (loading || !currentUser || !currentUser.statistics || !currentActivity) {
-    return <div className="flex w-full h-[100vh] justify-center items-center">
-      <p className="text-4xl ">Chargement...</p>
-    </div>;
+    return (
+      <div className="flex w-full h-[100vh] justify-center items-center">
+        <Logo />
+      </div>
+    );
   }
   let date = new Date(currentUser.profile.createdAt);
   date = date.toLocaleDateString("fr-FR", {
@@ -28,18 +31,17 @@ export default function Profile() {
     return `${sign}${m}m${String(r).padStart(2, "0")}`;
   };
 
-
   const totalCal = currentActivity?.reduce((acc, it) => acc + it.caloriesBurned, 0) ?? 0;
   const diffMs = new Date().getTime() - new Date(currentUser.profile.createdAt).getTime();
   const count = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  const restDays = (count - currentActivity.length + 1) || 0;
+  const restDays = count - currentActivity.length + 1 || 0;
   let totalDistance = currentActivity.reduce((acc, it) => acc + it.distance, 0);
   totalDistance = totalDistance.toFixed(0);
   const totalMinutes = currentActivity.reduce((acc, it) => acc + it.duration, 0);
 
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
-  const sessions = currentActivity.length
+  const sessions = currentActivity.length;
 
   return (
     <>
@@ -47,11 +49,14 @@ export default function Profile() {
       <main className="pl-37.5 pr-25 flex gap-15">
         <section className="flex flex-col gap-5 w-[50%]">
           <figure className="flex items-center gap-10 bg-white px-12 py-6 rounded-2xl">
-            <img
-              src={currentUser.profile.profilePicture}
-              className="[overflow-clip-margin:unset] object-cover w-[18.1%] h-34 rounded-lg"
-              alt="image de profil"
-            />
+            <div className="w-[18.1%] overflow-hidden rounded-lg">
+              <img
+                src={currentUser.profile.profilePicture}
+                className="[overflow-clip-margin:unset] object-cover w-full h-34 rounded-lg hover:scale-130 duration-350"
+                alt="image de profil"
+              />
+            </div>
+
             <figcaption className="w-70">
               <h2 className="font-medium text-2xl">
                 {currentUser.profile.firstName} {currentUser.profile.lastName}

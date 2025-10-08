@@ -1,3 +1,5 @@
+import Logo from "../components/logo";
+
 const Footer = () => {
   return ( 
   <footer className="flex justify-between bg-white w-full text-sm py-2.5 px-12.5">
@@ -8,6 +10,10 @@ const Footer = () => {
     <span className="flex gap-5">
         <p className="cursor-pointer">Conditions générales</p>
         <p className="cursor-pointer">Contact</p>
+        <div className="h-2 w-7">
+        <Logo />
+
+        </div>
     </span>
 
   </footer> )

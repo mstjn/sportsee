@@ -47,7 +47,7 @@ export const AppProvider = ({ children }) => {
   }, [token]);
 
   return (
-    <AppContext.Provider value={{ error, token, setToken, currentUser, setCurrentUser, loading, currentActivity, setCurrentActivity }}>
+    <AppContext.Provider value={{setError, error, token, setToken, currentUser, setCurrentUser, loading, currentActivity, setCurrentActivity }}>
       {children}
     </AppContext.Provider>
   );

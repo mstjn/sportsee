@@ -41,8 +41,6 @@ export const login = async (username, password) => {
 
     const data = await response.json();
 
-    console.log(data);
-
     return data;
   } catch {
     throw new Error("Erreur dans la récupération de l'api");

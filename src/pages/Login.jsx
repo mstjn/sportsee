@@ -3,13 +3,13 @@ import { useContext, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { login } from "../api/api";
 import { AppContext } from "../AppContext";
+import Logo from "../components/logo";
 
 export default function Login() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { token, setToken, error, setError} = useContext(AppContext);
-
+  const { token, setToken, error, setError } = useContext(AppContext);
 
   if (token) {
     return <Navigate to="/dashboard" replace />;
@@ -29,7 +29,10 @@ export default function Login() {
   return (
     <>
       <header className="absolute">
-        <h1 className="text-[#0B23F4] text-3xl font-bold">SPORTSEE</h1>
+        <div className="flex gap-2 items-center">
+          <Logo />
+          <h1 className="text-[#0B23F4] text-3xl font-bold">SPORTSEE</h1>
+        </div>
       </header>
       <main className="px-25 flex">
         <div className="translate-y-1/4 mt-5 ml-12.5 bg-white rounded-2xl px-10 pt-10 pb-20 w-[25%] flex flex-col gap-5">
@@ -70,7 +73,10 @@ export default function Login() {
             </div>
             <p className={`${error ? "text-red-400 text-sm self-center" : "hidden"}`}>Les identifiants sont incorrects</p>
 
-            <button onClick={handleLogin} className="my-5 bg-[#0B23F4] text-white rounded-lg font-medium w-full py-3.5 hover:bg-[#5465F7]">
+            <button
+              onClick={handleLogin}
+              className="my-5 bg-[#0B23F4] text-white rounded-lg font-medium w-full py-3.5 hover:bg-[#5465F7] duration-400 delay-50"
+            >
               Se connecter
             </button>
           </form>
