@@ -68,7 +68,7 @@ export default function Profile() {
             <h2 className="text-black font-medium text-2xl">Votre profil</h2>
             <hr className="border-0 h-[1px] bg-[#E7E7E7]" />
             <p className="text-lg">Âge: {currentUser.profile.age}</p>
-            <p className="text-lg">Genre: Femme</p>
+            <p className="text-lg">Genre: {currentUser.profile.gender}</p>
             <p className="text-lg">Taille: {formatCmToMeterString(currentUser.profile.height)}</p>
             <p className="text-lg">Poids: {currentUser.profile.weight}kg</p>
           </div>
